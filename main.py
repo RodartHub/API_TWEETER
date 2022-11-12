@@ -1,9 +1,10 @@
 #Python
 import json
 from typing import List
+from uuid import UUID
 
 # FastAPI
-from fastapi import FastAPI, status, Body, Form
+from fastapi import FastAPI, status, Body, Form, Path, HTTPException
 
 #Pydantic
 
@@ -128,8 +129,40 @@ def show_all_users():
     summary='Show a User',
     tags=['Users']
 )
-def show_a_user():
-    pass
+def show_a_user(
+    user_id: UUID = Path(
+        ...,
+        title='User ID',
+        description='This is the user ID',
+        example='3fa85f64-5717-4562-b3fc-2c963f66afa6'
+    )
+    ):
+    '''
+    Show a User
+
+    This path operation show if a person exist in the app
+
+    Parameters:
+    - **user_id: UUID**
+
+    Returns a json with user data:
+    - **user_id: UUID**
+    - **email: EmailStr**
+    - **first_name: str**
+    - **last_name: str**
+    - **birth_day: datetime**
+    '''
+    with open('users.json', 'r', encoding='utf-8') as f:
+        results = json.loads(f.read())
+        id = str(user_id)
+        for data in results:
+            if data['user_id'] == id:
+                return data
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"This {user_id} does'nt exist!"
+                )
 
 ###Delete a user
 @app.delete(
