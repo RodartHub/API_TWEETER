@@ -3,11 +3,15 @@ import json
 from typing import List
 
 # FastAPI
-from fastapi import FastAPI, status, Body
+from fastapi import FastAPI, status, Body, Form
+
+#Pydantic
+
+from pydantic import EmailStr
 
 #Models
 
-from models import User, UserBase, UserLogin, UserRegister
+from models import User, UserBase, UserLogin, UserRegister, LoginOut
 from models import Tweet
 
 app = FastAPI()
@@ -58,13 +62,34 @@ def signup(
 ### Login a user
 @app.post(
     path='/login',
-    response_model=User,
+    response_model=LoginOut,
     status_code=status.HTTP_200_OK,
     summary='Login a User',
     tags=['Users']
 )
-def login():
-    pass
+def login(
+    email: EmailStr = Form(...),
+    password: str = Form(...)
+):
+    '''
+    Login 
+
+    This path operation login a person in the app
+
+    Parameters:
+    - Request body parameters:
+        - email: EmailStr
+        - password: str
+
+    Returns a LoginOut model with username and message
+    '''
+    with open('users.json', 'r+', encoding='utf-8') as f:
+        data = json.loads(f.read())
+        for user in data:
+            if email == user['email'] and password == user['password']:
+                return LoginOut(email=email)
+        return LoginOut(email=email, message='Login Unsuccessfully')
+
 
 ###Show all users
 @app.get(

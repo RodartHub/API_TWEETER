@@ -48,3 +48,7 @@ class Tweet(BaseModel):
     created_at: datetime = Field(default=datetime.now())
     updated_at: Optional[datetime] = Field(default=None)
     by: User = Field(...)
+
+class LoginOut(BaseModel):
+    email: EmailStr = Field(...)
+    message: str = Field(default='Login successfully!')
