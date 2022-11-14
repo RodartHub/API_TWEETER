@@ -218,7 +218,6 @@ def delete_a_user(
                 )
 
 
-
 ###Update a user
 @router.put(
     path='/users/{user_id}/update',
@@ -227,5 +226,47 @@ def delete_a_user(
     summary='Update a user',
     tags=['Users']
 )
-def update_a_user():
-    pass
+def update_a_user(
+    user_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    ),
+    user: UserRegister = Body(...)
+):
+    '''
+    Update User
+
+    This path operation update a user information in the app and save in the database
+
+    Parameters:
+    - user_id: UUID
+    - Request body parameter:
+        - **user: User** -> A user model with user_id, email, first name,
+                            last name, birth_day and password.
+    
+    Returns a user model with user_id, email, first name,
+    last name, birth_day and password.
+    '''
+
+    user_id = str(user_id)
+    user_dict = user.dict()
+    user_dict['user_id'] = str(user_dict['user_id'])
+    user_dict['birth_date'] = str(user_dict['birth_date'])
+    with open(DATAUSER_PATH, 'r+', encoding= 'utf-8') as f:
+        results = json.loads(f.read())
+
+        for user in results:
+            if user['user_id'] == user_id:
+                results[results.index(user)] = user_dict
+
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return user
+            else:
+                raise HTTPException(
+                    status_code= status.HTTP_404_NOT_FOUND,
+                    detail=f"This {user_id} doesn't exist!"
+                )
+
