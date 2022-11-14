@@ -4,15 +4,11 @@ from typing import List
 from uuid import UUID
 
 # FastAPI
-from fastapi import FastAPI, APIRouter, status, Body, Form, Path, HTTPException
+from fastapi import APIRouter, status, Body, Form, Path, HTTPException
 
 #Models
 
 from models.tweets import Tweet
-
-#Tools
-
-from models.tools import serialize
 
 #data
 

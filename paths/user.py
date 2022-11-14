@@ -14,10 +14,6 @@ from pydantic import EmailStr
 
 DATAUSER_PATH = 'data/users.json'
 
-#Tools
-
-from models.tools import serialize
-
 #Models
 
 from models.users import User, UserRegister, LoginOut
