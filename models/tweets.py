@@ -4,10 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 #Pydantic
-from pydantic import BaseModel, EmailStr, Field
-
-# FastAPI
-from fastapi import FastAPI
+from pydantic import BaseModel, Field
 
 #Users
 from models.users import User

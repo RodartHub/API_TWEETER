@@ -6,20 +6,11 @@ from typing import Optional
 #Pydantic
 from pydantic import BaseModel, EmailStr, Field
 
-# FastAPI
-from fastapi import FastAPI
-
 #Models
 class UserBase(BaseModel):
     user_id : UUID = Field(...)
     email: EmailStr = Field(...)
 
-class UserLogin(UserBase):
-    password: str = Field(
-        ...,
-        min_length=8,
-        max_length=64
-        )
 
 class User(UserBase):
     
@@ -34,6 +25,13 @@ class User(UserBase):
         max_length=50
     )
     birth_date: Optional[date] = Field(default=None)
+    
+class UserLogin(UserBase):
+    password: str = Field(
+        ...,
+        min_length=8,
+        max_length=64
+        )
 
 class LoginOut(BaseModel):
     email: EmailStr = Field(...)

@@ -6,10 +6,6 @@ from uuid import UUID
 # FastAPI
 from fastapi import FastAPI, APIRouter, status, Body, Form, Path, HTTPException
 
-#Pydantic
-
-from pydantic import EmailStr
-
 #Models
 
 from models.users import User, UserBase, UserLogin, UserRegister, LoginOut

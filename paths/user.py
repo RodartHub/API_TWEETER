@@ -10,6 +10,10 @@ from fastapi import APIRouter, status, Body, Form, Path, HTTPException
 
 from pydantic import EmailStr
 
+#data
+
+DATAUSER_PATH = 'data/users.json'
+
 #Models
 
 from models.users import User, UserRegister, LoginOut
@@ -45,7 +49,7 @@ def signup(
     - **last_name: str**
     - **birth_day: datetime**
     '''
-    with open('users.json', 'r+', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
         results = json.loads(f.read())
         user_dict = user.dict()
         user_dict['user_id'] = str(user_dict['user_id'])
@@ -80,7 +84,7 @@ def login(
 
     Returns a LoginOut model with username and message
     '''
-    with open('users.json', 'r+', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
         data = json.loads(f.read())
         for user in data:
             if email == user['email'] and password == user['password']:
