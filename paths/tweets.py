@@ -8,8 +8,12 @@ from fastapi import FastAPI, APIRouter, status, Body, Form, Path, HTTPException
 
 #Models
 
-from models.users import User, UserBase, UserLogin, UserRegister, LoginOut
 from models.tweets import Tweet
+
+#data
+
+DATAUSER_PATH = 'data/tweets.json'
+
 
 router = APIRouter()
 
@@ -40,7 +44,7 @@ def home():
 
     '''
 
-    with open('tweets.json', 'r', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r', encoding='utf-8') as f:
         results = json.loads(f.read())
         return results
     
@@ -71,7 +75,7 @@ def post(tweet: Tweet = Body(...)):
     - **by: User**
 
     '''
-    with open('tweets.json', 'r+', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
         results = json.loads(f.read())
         tweet_dict = tweet.dict()
         tweet_dict['tweet_id'] = str(tweet_dict['tweet_id'])

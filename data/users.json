@@ -33,10 +33,18 @@
     },
     {
         "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "marciano@example.com",
-        "password": "holasoyunmarciano",
-        "first_name": "Marciano",
-        "last_name": "UFO",
-        "birth_date": "2022-10-14"
+        "email": "user@example.com",
+        "password": "stringst",
+        "first_name": "string",
+        "last_name": "string",
+        "birth_date": "2022-11-14"
+    },
+    {
+        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+        "email": "user@example.com",
+        "password": "stringst",
+        "first_name": "string",
+        "last_name": "string",
+        "birth_date": "2022-11-14"
     }
 ]

@@ -14,6 +14,10 @@ from pydantic import EmailStr
 
 DATAUSER_PATH = 'data/users.json'
 
+#Tools
+
+from models.tools import serialize
+
 #Models
 
 from models.users import User, UserRegister, LoginOut
@@ -52,9 +56,11 @@ def signup(
     with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
         results = json.loads(f.read())
         user_dict = user.dict()
-        user_dict['user_id'] = str(user_dict['user_id'])
-        user_dict['birth_date'] = str(user_dict['birth_date'])
-        results.append(user_dict)
+        user_convert=serialize(user_dict)
+        # user_dict['user_id'] = str(user_dict['user_id'])
+        # user_dict['birth_date'] = str(user_dict['birth_date'])
+        results.append(user_convert)
+        # results.append(user_dict)
         f.seek(0)
         f.write(json.dumps(results))
         return user
