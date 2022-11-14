@@ -4,8 +4,10 @@ from typing import Dict
 from uuid import UUID
 from datetime import date, datetime
 
-types = [UUID, date]
+types = [UUID, date, datetime]
+
 #This function convert each key in STR
+
 def serialize(input: Dict):
     for key in input:
         val = input[key]

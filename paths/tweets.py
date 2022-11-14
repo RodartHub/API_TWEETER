@@ -10,6 +10,10 @@ from fastapi import FastAPI, APIRouter, status, Body, Form, Path, HTTPException
 
 from models.tweets import Tweet
 
+#Tools
+
+from models.tools import serialize
+
 #data
 
 DATAUSER_PATH = 'data/tweets.json'
@@ -83,6 +87,7 @@ def post(tweet: Tweet = Body(...)):
         tweet_dict['updated_at'] = str(tweet_dict['updated_at'])
         tweet_dict['by']['user_id'] = str(tweet_dict['by']['user_id'])
         tweet_dict['by']['birth_date'] = str(tweet_dict['by']['birth_date'])
+
 
         results.append(tweet_dict)
         f.seek(0)
