@@ -176,8 +176,48 @@ def show_a_user(
     summary='Delete a User',
     tags=['Users']
 )
-def delete_a_user():
-    pass
+def delete_a_user(
+    user_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    )
+):
+    '''
+    Delete a User
+
+    This path operation delete a user in the app
+
+    Parameter:
+    - **user_id: UUID**
+
+    Returns a json with deleted user data:
+    - **user_id: UUID**
+    - **email: EmailStr**
+    - **first_name: str**
+    - **last_name: str**
+    - **birth_day: datetime**
+    '''
+
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+        results = json.loads(f.read())
+        id = str(user_id)
+
+        for data in results:
+            if data['user_id'] == id:
+                results.remove(data)
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return data
+
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"This {user_id} doesn't exist! "
+                )
+
+
 
 ###Update a user
 @router.put(
