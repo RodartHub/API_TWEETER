@@ -18,6 +18,10 @@ DATAUSER_PATH = 'data/users.json'
 
 from models.users import User, UserRegister, LoginOut
 
+#tools
+
+from models.tools import show_a_element
+
 router = APIRouter()
 
 ## Users----------------------------------------------------------
@@ -117,7 +121,7 @@ def show_all_users():
 
     '''
 
-    with open('users.json', 'r', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r', encoding='utf-8') as f:
         results = json.loads(f.read())
         return results
 
@@ -134,7 +138,6 @@ def show_a_user(
         ...,
         title='User ID',
         description='This is the user ID',
-        example='3fa85f64-5717-4562-b3fc-2c963f66afa6'
     )
     ):
     '''
@@ -152,17 +155,18 @@ def show_a_user(
     - **last_name: str**
     - **birth_day: datetime**
     '''
-    with open('users.json', 'r', encoding='utf-8') as f:
-        results = json.loads(f.read())
-        id = str(user_id)
-        for data in results:
-            if data['user_id'] == id:
-                return data
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"This {user_id} does'nt exist!"
-                )
+    # with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+    #     results = json.loads(f.read())
+    #     id = str(user_id)
+    # for data in results:
+    #     if data['user_id'] == id:
+    #         return data
+    #     else:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_404_NOT_FOUND,
+    #             detail=f"This {user_id} does'nt exist!"
+            # )
+    return show_a_element(DATAUSER_PATH, user_id, 'user')
 
 ###Delete a user
 @router.delete(
@@ -172,6 +176,7 @@ def show_a_user(
     summary='Delete a User',
     tags=['Users']
 )
+
 def delete_a_user(
     user_id: UUID = Path(
         ...,

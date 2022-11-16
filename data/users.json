@@ -6,5 +6,13 @@
         "first_name": "Juan",
         "last_name": "Fernandez",
         "birth_date": "2022-10-14"
+    },
+    {
+        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa9",
+        "email": "rodrigo@example.com",
+        "password": "holasoyrodrigo",
+        "first_name": "rodrigo",
+        "last_name": "valencia",
+        "birth_date": "1995-10-12"
     }
 ]

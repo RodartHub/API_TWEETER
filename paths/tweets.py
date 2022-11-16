@@ -14,6 +14,10 @@ from models.tweets import Tweet
 
 DATAUSER_PATH = 'data/tweets.json'
 
+#tools
+
+from models.tools import read_data
+
 
 router = APIRouter()
 
@@ -84,7 +88,6 @@ def post(tweet: Tweet = Body(...)):
         tweet_dict['by']['user_id'] = str(tweet_dict['by']['user_id'])
         tweet_dict['by']['birth_date'] = str(tweet_dict['by']['birth_date'])
 
-
         results.append(tweet_dict)
         f.seek(0)
         f.write(json.dumps(results))
@@ -99,8 +102,37 @@ def post(tweet: Tweet = Body(...)):
     summary='Show a tweet',
     tags=['Tweets']
 )
-def show_a_tweet():
-    pass
+def show_a_tweet(
+    tweet_id: UUID = Path(
+        ...,
+        title= 'tweet_id',
+        description='This is the tweet ID'
+    )
+):
+    '''
+    Show a tweet
+
+    This is path operation show a tweet
+
+    Parameters:
+    - **tweet_id: UUID**
+
+    Returns a json with tweet data:
+    - **tweet_id: UUID** 
+    - **content: str**
+    - **create_at: datetime**
+    - **updated_at: Optional[datetime]**
+    - **by: User**
+    '''
+    results = read_data(DATAUSER_PATH)
+    id = str(tweet_id)    
+    for data in results:    
+        if data['tweet_id'] == id:
+            return data     
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"This {tweet_id} does'nt exist!"
+        )
 
 ###Delete a tweet
 @router.delete(
