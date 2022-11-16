@@ -142,8 +142,49 @@ def show_a_tweet(
     summary='Delete a tweet',
     tags=['Tweets']
 )
-def delete_a_tweet():
-    pass
+def delete_a_tweet(
+    tweet_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    )
+):
+    '''
+    Delete a Tweet
+
+    This path operation delete a tweet in the app
+
+    Parameter:
+    - **tweet_id: UUID**
+
+    Returns a json with deleted user data:
+    - **tweet_id: UUID**
+    - **content: str**
+    - **created_at: datetime**
+    - **updated_at: datetime**
+    - **by: User** -->
+        - **email: EmailStr**
+        - **first_name: str**
+        - **last_name: str**
+        - **birth_day: datetime**
+    '''
+
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+        results = json.loads(f.read())
+        id = str(tweet_id)
+
+        for data in results:
+            if data['tweet_id'] == id:
+                results.remove(data)
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return data
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"This {tweet_id} doesn't exist! "
+                )
 
 ###Update a tweet
 @router.put(

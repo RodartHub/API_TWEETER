@@ -20,7 +20,7 @@ from models.users import User, UserRegister, LoginOut
 
 #tools
 
-from models.tools import show_a_element
+from models.tools import show_a_element, delete_a_element
 
 router = APIRouter()
 
@@ -211,7 +211,6 @@ def delete_a_user(
                     f.seek(0)
                     f.write(json.dumps(results))
                 return data
-
             else:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
