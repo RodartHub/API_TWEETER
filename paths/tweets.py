@@ -2,6 +2,7 @@
 import json
 from typing import List
 from uuid import UUID
+from datetime import datetime
 
 # FastAPI
 from fastapi import APIRouter, status, Body, Form, Path, HTTPException
@@ -9,7 +10,7 @@ from fastapi import APIRouter, status, Body, Form, Path, HTTPException
 #Models
 
 from models.tweets import Tweet
-from models.users import UserRegister
+
 
 #data
 
@@ -201,7 +202,13 @@ def update_a_tweet(
         title='Tweet ID',
         description= 'This is the tweet ID'
     ),
-    user: UserRegister = Body(...)
+    content:str = Form(
+        ...,
+        min_length=1,
+        max_length=256,
+        title='Tweet content',
+        description='This is the content of the tweet'
+    ),
 ):
     '''
     Update Tweet
@@ -209,34 +216,36 @@ def update_a_tweet(
     This path operation update a user information in the app and save in the database
 
     Parameters:
-    - user_id: UUID
-    - Request body parameter:
-        - **user: User** -> A user model with user_id, email, first name,
-                            last name, birth_day and password.
+    - tweet_id: UUID
+    - content: str
     
-    Returns a user model with user_id, email, first name,
-    last name, birth_day and password.
+    Returns a a JSON with:
+    - tweet_id: UUID
+    - content: str
+    - created_at: datetime
+    - updated_ad: datetime
+    - by: user: User
     '''
 
-    user_id = str(user_id)
-    user_dict = user.dict()
-    user_dict['user_id'] = str(user_dict['user_id'])
-    user_dict['birth_date'] = str(user_dict['birth_date'])
+    tweet_id = str(tweet_id)
+    
     with open(DATAUSER_PATH, 'r+', encoding= 'utf-8') as f:
         results = json.loads(f.read())
 
-        for user in results:
-            if user['user_id'] == user_id:
-                results[results.index(user)] = user_dict
+        for tweet in results:
+            if tweet['tweet_id'] == tweet_id:
+                tweet['content'] = content
+                tweet['updated_at'] = str(datetime.now())
 
                 with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
                     f.seek(0)
                     f.write(json.dumps(results))
-                return user
-            else:
-                raise HTTPException(
+                return tweet
+
+        else:
+            raise HTTPException(
                     status_code= status.HTTP_404_NOT_FOUND,
-                    detail=f"This {user_id} doesn't exist!"
+                    detail=f"This {tweet_id} doesn't exist!"
                 )
     
 
