@@ -1,58 +1,10 @@
 [
     {
         "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "rodrigo@example.com",
-        "password": "holasoyrodrigo",
+        "email": "rodrigovalencia@example.com",
+        "password": "1Rodart1900",
         "first_name": "Rodrigo",
         "last_name": "Valencia",
-        "birth_date": "2022-11-11"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "daniela@example.com",
-        "password": "holasoydaniela",
-        "first_name": "Daniela",
-        "last_name": "Franco",
-        "birth_date": "1995-03-19"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "pablo@example.com",
-        "password": "holasoypablo12",
-        "first_name": "Pablo",
-        "last_name": "Rodriguez",
-        "birth_date": "2022-11-14"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "marciano@example.com",
-        "password": "holasoyunmarciano",
-        "first_name": "Marciano",
-        "last_name": "UFO",
-        "birth_date": "2022-10-14"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "user@example.com",
-        "password": "stringst",
-        "first_name": "string",
-        "last_name": "string",
-        "birth_date": "2022-11-14"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "user@example.com",
-        "password": "stringst",
-        "first_name": "string",
-        "last_name": "string",
-        "birth_date": "2022-11-14"
-    },
-    {
-        "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        "email": "user@example.com",
-        "password": "stringst",
-        "first_name": "string",
-        "last_name": "string",
-        "birth_date": "2022-11-14"
+        "birth_date": "1990-11-17"
     }
-]  
+]

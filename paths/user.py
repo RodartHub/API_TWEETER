@@ -14,13 +14,13 @@ from pydantic import EmailStr
 
 DATAUSER_PATH = 'data/users.json'
 
-#Tools
-
-from models.tools import serialize
-
 #Models
 
 from models.users import User, UserRegister, LoginOut
+
+#tools
+
+from models.tools import show_a_element, delete_a_element
 
 router = APIRouter()
 
@@ -121,7 +121,7 @@ def show_all_users():
 
     '''
 
-    with open('users.json', 'r', encoding='utf-8') as f:
+    with open(DATAUSER_PATH, 'r', encoding='utf-8') as f:
         results = json.loads(f.read())
         return results
 
@@ -138,7 +138,6 @@ def show_a_user(
         ...,
         title='User ID',
         description='This is the user ID',
-        example='3fa85f64-5717-4562-b3fc-2c963f66afa6'
     )
     ):
     '''
@@ -156,17 +155,18 @@ def show_a_user(
     - **last_name: str**
     - **birth_day: datetime**
     '''
-    with open('users.json', 'r', encoding='utf-8') as f:
-        results = json.loads(f.read())
-        id = str(user_id)
-        for data in results:
-            if data['user_id'] == id:
-                return data
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"This {user_id} does'nt exist!"
-                )
+    # with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+    #     results = json.loads(f.read())
+    #     id = str(user_id)
+    # for data in results:
+    #     if data['user_id'] == id:
+    #         return data
+    #     else:
+    #         raise HTTPException(
+    #             status_code=status.HTTP_404_NOT_FOUND,
+    #             detail=f"This {user_id} does'nt exist!"
+            # )
+    return show_a_element(DATAUSER_PATH, user_id, 'user')
 
 ###Delete a user
 @router.delete(
@@ -176,8 +176,47 @@ def show_a_user(
     summary='Delete a User',
     tags=['Users']
 )
-def delete_a_user():
-    pass
+
+def delete_a_user(
+    user_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    )
+):
+    '''
+    Delete a User
+
+    This path operation delete a user in the app
+
+    Parameter:
+    - **user_id: UUID**
+
+    Returns a json with deleted user data:
+    - **user_id: UUID**
+    - **email: EmailStr**
+    - **first_name: str**
+    - **last_name: str**
+    - **birth_day: datetime**
+    '''
+
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+        results = json.loads(f.read())
+        id = str(user_id)
+
+        for data in results:
+            if data['user_id'] == id:
+                results.remove(data)
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return data
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"This {user_id} doesn't exist! "
+                )
+
 
 ###Update a user
 @router.put(
@@ -187,5 +226,47 @@ def delete_a_user():
     summary='Update a user',
     tags=['Users']
 )
-def update_a_user():
-    pass
+def update_a_user(
+    user_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    ),
+    user: UserRegister = Body(...)
+):
+    '''
+    Update User
+
+    This path operation update a user information in the app and save in the database
+
+    Parameters:
+    - user_id: UUID
+    - Request body parameter:
+        - **user: User** -> A user model with user_id, email, first name,
+                            last name, birth_day and password.
+    
+    Returns a user model with user_id, email, first name,
+    last name, birth_day and password.
+    '''
+
+    user_id = str(user_id)
+    user_dict = user.dict()
+    user_dict['user_id'] = str(user_dict['user_id'])
+    user_dict['birth_date'] = str(user_dict['birth_date'])
+    with open(DATAUSER_PATH, 'r+', encoding= 'utf-8') as f:
+        results = json.loads(f.read())
+
+        for user in results:
+            if user['user_id'] == user_id:
+                results[results.index(user)] = user_dict
+
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return user
+            else:
+                raise HTTPException(
+                    status_code= status.HTTP_404_NOT_FOUND,
+                    detail=f"This {user_id} doesn't exist!"
+                )
+

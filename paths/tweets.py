@@ -2,21 +2,23 @@
 import json
 from typing import List
 from uuid import UUID
+from datetime import datetime
 
 # FastAPI
-from fastapi import FastAPI, APIRouter, status, Body, Form, Path, HTTPException
+from fastapi import APIRouter, status, Body, Form, Path, HTTPException
 
 #Models
 
 from models.tweets import Tweet
 
-#Tools
-
-from models.tools import serialize
 
 #data
 
 DATAUSER_PATH = 'data/tweets.json'
+
+#tools
+
+from models.tools import read_data
 
 
 router = APIRouter()
@@ -88,7 +90,6 @@ def post(tweet: Tweet = Body(...)):
         tweet_dict['by']['user_id'] = str(tweet_dict['by']['user_id'])
         tweet_dict['by']['birth_date'] = str(tweet_dict['by']['birth_date'])
 
-
         results.append(tweet_dict)
         f.seek(0)
         f.write(json.dumps(results))
@@ -103,8 +104,37 @@ def post(tweet: Tweet = Body(...)):
     summary='Show a tweet',
     tags=['Tweets']
 )
-def show_a_tweet():
-    pass
+def show_a_tweet(
+    tweet_id: UUID = Path(
+        ...,
+        title= 'tweet_id',
+        description='This is the tweet ID'
+    )
+):
+    '''
+    Show a tweet
+
+    This is path operation show a tweet
+
+    Parameters:
+    - **tweet_id: UUID**
+
+    Returns a json with tweet data:
+    - **tweet_id: UUID** 
+    - **content: str**
+    - **create_at: datetime**
+    - **updated_at: Optional[datetime]**
+    - **by: User**
+    '''
+    results = read_data(DATAUSER_PATH)
+    id = str(tweet_id)    
+    for data in results:    
+        if data['tweet_id'] == id:
+            return data     
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"This {tweet_id} does'nt exist!"
+        )
 
 ###Delete a tweet
 @router.delete(
@@ -114,8 +144,49 @@ def show_a_tweet():
     summary='Delete a tweet',
     tags=['Tweets']
 )
-def delete_a_tweet():
-    pass
+def delete_a_tweet(
+    tweet_id: UUID = Path(
+        ...,
+        title='User ID',
+        description= 'This is the user ID'
+    )
+):
+    '''
+    Delete a Tweet
+
+    This path operation delete a tweet in the app
+
+    Parameter:
+    - **tweet_id: UUID**
+
+    Returns a json with deleted user data:
+    - **tweet_id: UUID**
+    - **content: str**
+    - **created_at: datetime**
+    - **updated_at: datetime**
+    - **by: User** -->
+        - **email: EmailStr**
+        - **first_name: str**
+        - **last_name: str**
+        - **birth_day: datetime**
+    '''
+
+    with open(DATAUSER_PATH, 'r+', encoding='utf-8') as f:
+        results = json.loads(f.read())
+        id = str(tweet_id)
+
+        for data in results:
+            if data['tweet_id'] == id:
+                results.remove(data)
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return data
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"This {tweet_id} doesn't exist! "
+                )
 
 ###Update a tweet
 @router.put(
@@ -125,6 +196,56 @@ def delete_a_tweet():
     summary='Update a tweet',
     tags=['Tweets']
 )
-def update_a_tweet():
-    pass
+def update_a_tweet(
+    tweet_id: UUID = Path(
+        ...,
+        title='Tweet ID',
+        description= 'This is the tweet ID'
+    ),
+    content:str = Form(
+        ...,
+        min_length=1,
+        max_length=256,
+        title='Tweet content',
+        description='This is the content of the tweet'
+    ),
+):
+    '''
+    Update Tweet
+
+    This path operation update a user information in the app and save in the database
+
+    Parameters:
+    - tweet_id: UUID
+    - content: str
+    
+    Returns a a JSON with:
+    - tweet_id: UUID
+    - content: str
+    - created_at: datetime
+    - updated_ad: datetime
+    - by: user: User
+    '''
+
+    tweet_id = str(tweet_id)
+    
+    with open(DATAUSER_PATH, 'r+', encoding= 'utf-8') as f:
+        results = json.loads(f.read())
+
+        for tweet in results:
+            if tweet['tweet_id'] == tweet_id:
+                tweet['content'] = content
+                tweet['updated_at'] = str(datetime.now())
+
+                with open(DATAUSER_PATH, 'w', encoding='utf-8') as f:
+                    f.seek(0)
+                    f.write(json.dumps(results))
+                return tweet
+
+        else:
+            raise HTTPException(
+                    status_code= status.HTTP_404_NOT_FOUND,
+                    detail=f"This {tweet_id} doesn't exist!"
+                )
+    
 
